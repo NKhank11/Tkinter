@@ -1,12 +1,32 @@
+from logging import RootLogger
 from tkinter import *
 from tkinter import messagebox
 import ast
+
 
 root=Tk()
 root.title('Login')
 root.geometry('925x500+300+200')
 root.configure(bg="#fff")
 root.resizable(False, False)
+
+window_exists = BooleanVar()
+window_exists.set(False)
+
+def window_after_sign_in():
+    screen = Toplevel(root)
+    screen.title("App")
+    screen.geometry('925x500+300+200')
+    screen.config(bg='white')
+
+    Label(screen, text='Hello every one', bg='#fff',font=('Calibri(Body)', 50,'bold')).pack(expand=True)
+
+    screen.protocol("WM_DELETE_WINDOW", lambda: show_login_window(screen))
+
+def show_login_window(screen):
+    screen.destroy()
+    root.deiconify()
+
 
 def signin():
     username=user.get()
@@ -24,14 +44,8 @@ def signin():
 
 
     if username in r.keys() and password==r[username]:
-        screen=Toplevel(root)
-        screen.title("App")
-        screen.geometry('925x500+300+200')
-        screen.config(bg="white")
-
-        Label(screen,text='Hello Everyone!',bg='#fff',font=('Calibri(Body)', 50, 'bold')).pack(expand=True)
-        
-        screen.mainloop()
+        root.withdraw()
+        window_after_sign_in()
 
     # elif username!='admin' and password!='1234':
     #     messagebox.showerror("Invalid","Invalid username and password !")
@@ -44,6 +58,8 @@ def signin():
 
     else:
         messagebox.showerror('Invalid','invalid username or password')    
+
+
 
 
 ######@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -73,6 +89,11 @@ def signup_command():
                 file.close()
 
                 messagebox.showinfo('Signup', 'Successfully sign up')
+
+                # Đóng cửa sổ đăng ký và hiển thị cửa sổ đăng nhập
+                window.destroy()
+                root.deiconify()
+                window_exists.set(False)                
             except:
                 file=open('datasheet.txt','w')
                 pp=str({'Username':'password'})
@@ -162,15 +183,8 @@ def signup_command():
 
     signin =Button(frame,width=6,text='Sign in', border = 0, bg='white', cursor='hand2',fg='#57a1f8',command=sign)
     signin.place(x=200,y=340)
-
-
-
-
-
-
-
-
-
+    if not window_exists.get():
+        window_exists.set(True)
 
 
 
@@ -231,8 +245,6 @@ label.place(x=75,y=270)
 
 sign_up=Button(frame,width=6,text='Sign up', border=0,bg='white',cursor='hand2',fg='#57a1f8',command=signup_command)
 sign_up.place(x=215,y=270)
-
-
 
 
 
